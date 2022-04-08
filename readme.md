@@ -16,7 +16,7 @@ What does it bring?
 ## Usage
 
 1. Copy the docker folder to your SilverStripe project.
-2. Adjust replace `silverstripe_project.php` with your SilverStripe project name.
+2. Replace `silverstripe_project.php` with your SilverStripe project name.
 3. Ajust `git config`section in docker.sh with your creds.
 4. Adjust `containerName` in docker.sh with your container name.
 5. In Terminal change directory to the docker folder.
