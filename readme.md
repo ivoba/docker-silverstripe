@@ -8,6 +8,7 @@ What does it bring?
 - Apache 2.4 (Also due to shared hosting limits)
 - PHPMyAdmin for DB administration
 - Mailcatcher for testing emails
+- Zsh in container
 - UserID handling to avoid permission issues when processes in the container 
   (the shell script will adjust www-data in the container to your userID on the host, so it will be the same as on the host)
 
