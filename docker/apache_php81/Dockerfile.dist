@@ -1,0 +1,57 @@
+FROM composer:2.3 AS composer
+FROM php:8-apache-buster
+
+MAINTAINER ivo.bathke@gmail.com
+
+ENV HOME /var/www
+ENV TZ Europe/Berlin
+ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_CODENAME buster
+
+# install packages
+RUN apt update \
+  && apt install -y tzdata less vim wget unzip rsync git gnupg \
+  && apt install -y libfreetype6-dev libjpeg62-turbo libpng-dev libjpeg-dev libxml2-dev libxpm4 libzip-dev zsh \
+  && docker-php-ext-configure gd --with-jpeg --with-freetype \
+  && docker-php-ext-install gd zip bcmath soap mysqli intl pdo_mysql\
+  && pecl install xdebug \
+  && docker-php-ext-enable xdebug \
+  && apt clean \
+  && apt autoremove -y
+
+#Configure xdebug.
+RUN sed -i '1 a xdebug.start_with_request=trigger' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+ && sed -i '1 a xdebug.idekey=PHPSTORM' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+ && sed -i '1 a xdebug.client_host=host.docker.internal' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+ && sed -i '1 a xdebug.remote_handler=dbgp' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+ && sed -i '1 a xdebug.max_nesting_level=1200' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+ && sed -i '1 a xdebug.client_port=9000' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+# prepare entrypoint.d pattern
+RUN mkdir /entrypoint.d
+COPY ./files/entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.d/* /entrypoint.d/
+RUN chmod 777 /entrypoint.sh \
+  && chmod 777 /entrypoint.d/*
+
+# apache stuff
+RUN /usr/sbin/a2enmod rewrite && /usr/sbin/a2enmod headers && /usr/sbin/a2enmod expires
+COPY ./files/000-default.conf /etc/apache2/sites-available/000-default.conf
+
+RUN usermod -u $USER_ID www-data -s /bin/zsh
+
+#Install oh-my-zsh
+ENV TERM=xterm
+COPY ./files/zshrc.dist /var/www/.zshrc
+RUN git clone https://github.com/robbyrussell/oh-my-zsh.git /var/www/.oh-my-zsh
+
+# install composer
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+RUN chgrp -R www-data /var/www \
+    && chmod -R g+rwx /var/www
+
+WORKDIR /var/www/html
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["apache2-foreground"]

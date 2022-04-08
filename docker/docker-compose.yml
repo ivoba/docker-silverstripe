@@ -1,0 +1,54 @@
+version: "3"
+services:
+  ss_web:
+    build: apache_php81
+    hostname: "silverstripe_project.php"
+    container_name: "silverstripe_project.php"
+    ports:
+      - 8089:80
+    volumes:
+      - "../:/var/www/html/:cached"
+      - "~/.composer:/var/www/.composer"
+      - "./apache_php81/files/php.ini:/usr/local/etc/php/php.ini"
+      # - "./apache_php81/files/zshrc.dist:/var/www/.zshrc:ro" # todo this is currently a COPY
+    depends_on:
+      - db
+      - mailcatcher
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  db:
+    image: mysql:5.7
+    hostname: "silverstripe_project.mysql"
+    container_name: "silverstripe_project.mysql"
+    volumes:
+      - ${PWD}/data/mysql/:/var/lib/mysql
+      - ${PWD}/mysql/my.cnf:/etc/mysql/conf.d/z_my.cnf
+    environment:
+      MYSQL_DATABASE: ss
+      MYSQL_USER: ss
+      MYSQL_PASSWORD: ss
+      MYSQL_ROOT_PASSWORD: root
+
+  #phpmyadmin
+  pma:
+    image: phpmyadmin/phpmyadmin
+    container_name: "silverstripe_project.pma"
+    links:
+        - db
+    ports:
+        - 8081:80
+    environment:
+        - PMA_ARBITRARY=1
+        - PMA_PORT=3306
+        - PMA_HOST=db
+        - PMA_USER=root
+        - PMA_PASSWORD=root
+
+  #mailcatcher
+  mailcatcher:
+    container_name: "silverstripe_project.mailcatcher"
+    image: quay.io/datadarius/tiny-mailcatcher
+    ports:
+        - 1025:1025
+        - 1080:1080
