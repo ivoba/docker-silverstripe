@@ -14,6 +14,8 @@ services:
     depends_on:
       - db
       - mailcatcher
+    env_file:
+      - docker-env
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

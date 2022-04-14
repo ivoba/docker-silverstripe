@@ -9,14 +9,14 @@ What does it bring?
 - PHPMyAdmin for DB administration
 - Mailcatcher for testing emails
 - Zsh in container
-- UserID handling to avoid permission issues when processes in the container 
+- UserID handling to avoid permission issues for files written by the container  
   (the shell script will adjust www-data in the container to your userID on the host, so it will be the same as on the host)
 
 
 ## Usage
 
 1. Copy the docker folder to your SilverStripe project.
-2. Replace `silverstripe_project.php` with your SilverStripe project name.
+2. Replace `silverstripe_project` with your SilverStripe project name.
 3. Adjust `git config` section in docker.sh with your creds.
 4. Adjust `containerName` in docker.sh with your container name.
 5. In Terminal change directory to the docker folder.
