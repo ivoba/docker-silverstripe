@@ -19,7 +19,8 @@ What does it bring?
 2. Replace `silverstripe_project` with your SilverStripe project name.
 3. Adjust `git config` section in docker.sh with your creds.
 4. Adjust `containerName` in docker.sh with your container name.
-5. In Terminal change directory to the docker folder.
-6. Run `./docker.sh -l` to start the containers. You will be logged in into the php docker container.
-7. Inside the php container you can run `composer install` or any other console tasks like `vendor/bin/sake dev/build`.
-8. In browser go to http://localhost:8089 and you should see the SilverStripe site.
+5. Adjust `COMPOSE_PROJECT_NAME` in docker-env with your container name.
+6. In Terminal change directory to the docker folder.
+7. Run `./docker.sh -l` to start the containers. You will be logged in into the php docker container.
+8. Inside the php container you can run `composer install` or any other console tasks like `vendor/bin/sake dev/build`.
+9. In browser go to http://localhost:8089 and you should see the SilverStripe site.

@@ -1,1 +1,2 @@
 PHP_IDE_CONFIG=serverName=docker-silverstripe
+COMPOSE_PROJECT_NAME=silverstripe_project
